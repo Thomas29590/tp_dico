@@ -1,3 +1,4 @@
+
 # importation des bibliothèques nécessaires
 import requests
 import os
@@ -20,13 +21,13 @@ def recupere_donnes():
     donnes = []
     # ouverture du fichier précédemment créé
     with open(local_file) as csvfile:
-        reader = csv.reader(csvfile)
+        reader = csv.DictReader(csvfile)
         for ligne in reader:
             donnes.append(ligne)
     return donnes
         
 etablissements = recupere_donnes()
-print(etablissements[0:10])
+
 
 
 
@@ -39,10 +40,34 @@ print(etablissements[0:10])
 
 """
 
-def filtre(donnees, criteres):
+def filtrer(donnes, criteres, colonnes=None):
     resultat = []
-    for item in donnees:
-        # Vérifier si tous les critères sont satisfaits pour chaque dictionnaire
-        if all(item.get(cle) == valeur for cle, valeur in criteres.items()):
-            resultat.append(item)
-    return resultat
+
+    for info in donnes:
+        flag = True
+        for k, v in criteres.items():
+            if info[k] != v:
+                flag = False
+        if flag == True:
+            resultat.append(info)
+    
+    if colonnes:
+        resultat_final = []
+        for info in resultat:
+            resultat_final.append({k: info[k] for k in colonnes if k in info})
+        return resultat_final
+    else:
+        
+        return resultat
+
+
+print(filtrer(etablissements, {'COMMUNE':'CHATEAULIN'}))
+
+
+ #[['FID',                       'the_geom',                      'OBJECTID'     'INSEE_COMM', 'COMMUNE', 'CODE_ET', 'NOM_ET', 'STATUT']
+
+#['colleges_29.1', 'POINT (139542.9111092165 6796291.165203575)', '39', '29003', 'PLOUHINEC', '0330B',   'Locquéran',      'Public']
+
+
+
+
